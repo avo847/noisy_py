@@ -1,4 +1,5 @@
 import numpy as np
+import scipy.linalg as linalg
 """
 Set axis limits based on given data points and plot data
 """
@@ -20,7 +21,30 @@ def set_axis_lims(ax, data):
   ax.set_xlim(xlim_low, xlim_high)
   ax.set_ylim(ylim_low, ylim_high)
   
-  #xvals = np.arange(xlim_low, xlim_high, delta_x/num_pts)
-  #yvals = f(xvals)
+
+
+"""
+Solve a square linear system using 
+LU factorization, forward- and back-
+substitution.
+"""
+def solve(A, b):
+  [nrows, ncols] = np.shape(A)
+  nrows = int(nrows)
+  ncols = int(ncols)
+  if ncols != nrows:
+    print "WARNING: System is not square."
+  P,L,U = linalg.lu(A)
   
-  #ax.plot(xvals,yvals)
+  #Use forward substitution to solve Ly = Pb
+  Pb = np.dot(P,b)
+  y = np.array([0.]*ncols)
+  for i in np.arange(0,ncols):
+    y[i] = ( Pb[i] - np.dot(L[i,0:i],y[0:i])) / L[i,i]
+  
+  # Use back-substitution to solve Ux = y
+  x = np.array([0.]*ncols)
+  for i in range(ncols-1, -1, -1):
+    x[i] = (y[i] - np.dot(U[i,(i+1):ncols], x[i+1:ncols]))/U[i,i]
+
+  return x
