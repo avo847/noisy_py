@@ -18,11 +18,16 @@ ax.plot(xvals,f(xvals), label='original curve')
 
 
 # Determine coefficients for a polynomial fit
-w = lrg.poly_fit_ml(xvals, yvals, 6 )
+w = lrg.poly_fit_reg(xvals, yvals, 12, 0)
+print 'coeffs: ', w 
 
-fit = np.array([w[0]]*len(xvals))
+
+fit = np.array([w[0][0]]*len(xvals))
 for i in range(1, len(w)):
-  fit += w[i] * xvals**i
+  fit += w[i][0] * xvals**i
+  
+# compute sum squared error
+print 'mean square error: ', lrg.mean_sq_err(fit, yvals)
 
 # add polynomial fit to plot
 ax.plot(xvals, fit, 'r-', label="polynomial fit")  

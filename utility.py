@@ -4,7 +4,7 @@ import scipy.linalg as linalg
 Set axis limits based on given data points and plot data
 """
 def set_axis_lims(ax, data):
-  overhang = 0.5 # window overhang as percent of data width
+  overhang = 0.2 # window overhang as percent of data width
   #num_pts = 1000. # number of points to use for plotting function
   xmin = np.min(data[0,:])
   xmax = np.max(data[0,:])
@@ -24,7 +24,7 @@ def set_axis_lims(ax, data):
 
 
 """
-Solve a square linear system using 
+Solve a square linear system Ax=b using 
 LU factorization, forward- and back-
 substitution.
 """
