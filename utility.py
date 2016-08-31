@@ -48,3 +48,27 @@ def solve(A, b):
     x[i] = (y[i] - np.dot(U[i,(i+1):ncols], x[i+1:ncols]))/U[i,i]
 
   return x
+  
+  
+  
+"""
+Partition a numpy array into two such arrays, 
+either by proportion or by number.
+If a proportion is used the proportion of total s rounded 
+down to closest integer below that fraction of total
+number of elements.
+
+"""
+def partition(x, p):
+  numpts = len(x)
+  if (0<=p < 1):
+    lim = p * numpts
+  else:
+    lim = p
+  
+  lim = int(lim)
+  x1 = x[0:lim] # value indexed by lim not included
+  x2 = x[lim:numpts]
+  
+  return [x1,x2]
+  

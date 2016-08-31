@@ -3,6 +3,8 @@ import matplotlib.pyplot as plt
 import gen_data as gen
 import utility as util
 import linear_reg as lrg
+import metrics as metrics
+import cross_validation as cv
 
 def f(x):
   return np.sin(x)
@@ -21,6 +23,8 @@ ax.plot(xvals,f(xvals), label='original curve')
 w = lrg.poly_fit_reg(xvals, yvals, 12, 0)
 print 'coeffs: ', w 
 
+#cv.kcv(metrics.euclidean, 2, lrg.poly_fit_reg,  xvals, yvals, 12, 0)
+cv.partition(yvals,0.5, 1)
 
 fit = np.array([w[0][0]]*len(xvals))
 for i in range(1, len(w)):
@@ -28,6 +32,7 @@ for i in range(1, len(w)):
   
 # compute sum squared error
 print 'mean square error: ', lrg.mean_sq_err(fit, yvals)
+print "rms", metrics.root_mean_sq_err(fit,yvals)
 
 # add polynomial fit to plot
 ax.plot(xvals, fit, 'r-', label="polynomial fit")  
