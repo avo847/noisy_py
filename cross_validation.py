@@ -60,8 +60,6 @@ def kcv(metric, k, rand, model, x_vals, y_vals, *args):
   set_size = np.ceil(numpts / float(k) )# number of elements in test set
                                                       # use ceil because test set may be small
   np.vstack((x_vals,y_vals)) # throw exception here if different sizes
-  x_org = x_vals # original data, to be used for plotting after data set randomized
-  y_org = y_vals
   
   # sort data set for plotting
   p = x_vals.argsort() # determine required permuation to order x data
@@ -70,7 +68,7 @@ def kcv(metric, k, rand, model, x_vals, y_vals, *args):
   
   # randomize data set
   if rand:
-    [x_vals,yvals] = randomize_data(x_vals,y_vals,0)
+    [x_vals,y_vals] = randomize_data(x_vals,y_vals,0)
   
   # spli data into training set and test set
   for i in np.arange(0,k):
@@ -93,7 +91,7 @@ def kcv(metric, k, rand, model, x_vals, y_vals, *args):
       
     # print mean square error on test data
     print "iter: ", i
-    print "mean square error: ", lrg.mean_sq_err(fit, y_test)
+    print "mean square error: ", metric(fit, y_test)
     
     # plot training data, test data and fitted model on each run
     fig = plt.figure()
@@ -104,7 +102,7 @@ def kcv(metric, k, rand, model, x_vals, y_vals, *args):
     
     ax.plot(x_test, y_test, 'ro', label="test data")
     # add polynomial fit to plot
-    ax.plot(x_org, full_fit, 'r-', label="polynomial fit")  
+    ax.plot(x_sort, full_fit, 'r-', label="polynomial fit")  
     
     plt.grid('on')
     plt.legend()

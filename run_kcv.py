@@ -26,4 +26,4 @@ plt.legend()
 plt.show()
 
 
-cv.kcv(metrics.euclidean, 5, False, lrg.poly_fit_reg, xvals, yvals, 8, 0)
+cv.kcv(metrics.mean_sq_err, 5, True, lrg.poly_fit_reg, xvals, yvals, 8, 0)
