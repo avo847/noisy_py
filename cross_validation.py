@@ -47,25 +47,31 @@ performance on a particular metric.
 
 metric: used to determine efficacy of model
 k: number of subsets to split data into
-rand: randomize points in data set if true
+rand: (True/False) randomize points in data set if true
 model: function which computes fit from data sets
 x_vals: input deta
 y_vals: target/response data
 *args: additional inputs to fitting function
 
-Note: this function does not randomize inputs. If inputs are ordered,
-test data are taken as sequential 'slices' of the dataset. Polynomial 
-fitting is used, one drawback being even the coefficients are fit to data
-on a particular range, the global behaviour outside this range can be
-very erratic. When test data comprise the ends of the ordered dataset, 
-test metric shows very poor fit because of this. It is best to randomize 
-dataset before running this function.
+Note: 
 """
 def kcv(metric, k, rand, model, x_vals, y_vals, *args):
   numpts = len(y_vals)
   set_size = np.ceil(numpts / float(k) )# number of elements in test set
                                                       # use ceil because test set may be small
   np.vstack((x_vals,y_vals)) # throw exception here if different sizes
+  x_org = x_vals # original data, to be used for plotting after data set randomized
+  y_org = y_vals
+  
+  # sort data set for plotting
+  p = x_vals.argsort() # determine required permuation to order x data
+  x_sort = x_vals[p]
+  y_sort = y_vals[p]
+  
+  # randomize data set
+  if rand:
+    [x_vals,yvals] = randomize_data(x_vals,y_vals,0)
+  
   # spli data into training set and test set
   for i in np.arange(0,k):
     [x_test, x_train] = partition(x_vals, set_size, i*set_size)
@@ -80,9 +86,9 @@ def kcv(metric, k, rand, model, x_vals, y_vals, *args):
       fit += w[j][0] * x_test**j
     
     # Compute predicted values on all inputs, for plotting purposes  
-    full_fit = np.array([w[0][0]]*len(x_vals))
+    full_fit = np.array([w[0][0]]*len(x_sort))
     for j in range(1, len(w)):
-      full_fit += w[j][0] * x_vals**j
+      full_fit += w[j][0] * x_sort**j
       
       
     # print mean square error on test data
@@ -94,11 +100,11 @@ def kcv(metric, k, rand, model, x_vals, y_vals, *args):
     ax = fig.add_subplot(111)
     #util.set_axis_lims(ax, np.array([xvals,yvals]))
     ax.plot(x_train, y_train, 'o', label="training data")
-    ax.plot(x_vals,np.sin(x_vals), label='generated from')
+    ax.plot(x_sort,np.sin(x_sort), label='generated from')
     
     ax.plot(x_test, y_test, 'ro', label="test data")
     # add polynomial fit to plot
-    ax.plot(x_vals, full_fit, 'r-', label="polynomial fit")  
+    ax.plot(x_org, full_fit, 'r-', label="polynomial fit")  
     
     plt.grid('on')
     plt.legend()
@@ -115,14 +121,14 @@ y_data is assumed to be 1d numpy array
 x_data can be 2d array with each column corresponding to one data point
 
 """
-def randomize(x_data, y_data, seed=0):
+def randomize_data(x_data, y_data, seed=0):
   numpts = len(y_data)
   x_out = np.zeros(x_data.shape)
   y_out = np.zeros(y_data.shape)
   
   np.random.seed(seed)  
   index_in = np.random.permutation(numpts)
-  print "cv. randomize: permuted indicies ",  index_in
+  #print "cv. randomize: permuted indicies ",  index_in
   
   # perrmute columns of x_data and y_data according to the above permutation
   index_out = np.arange(0,numpts)
