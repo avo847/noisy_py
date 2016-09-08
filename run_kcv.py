@@ -12,6 +12,8 @@ def f(x):
 xvals = np.arange(-2*np.pi, 2*np.pi, 0.1)
 yvals = gen.noisy_1d(f, xvals, 1)
 
+#[xvals,yvals] = cv.randomize(xvals,yvals,0)
+
 
 fig = plt.figure()
 ax = fig.add_subplot(111)
@@ -24,4 +26,4 @@ plt.legend()
 plt.show()
 
 
-cv.kcv(metrics.euclidean, 5, lrg.poly_fit_reg, xvals, yvals, 8, 0)
+cv.kcv(metrics.euclidean, 5, True, lrg.poly_fit_reg, xvals, yvals, 8, 0)

@@ -47,12 +47,21 @@ performance on a particular metric.
 
 metric: used to determine efficacy of model
 k: number of subsets to split data into
+rand: randomize points in data set if true
 model: function which computes fit from data sets
 x_vals: input deta
 y_vals: target/response data
 *args: additional inputs to fitting function
+
+Note: this function does not randomize inputs. If inputs are ordered,
+test data are taken as sequential 'slices' of the dataset. Polynomial 
+fitting is used, one drawback being even the coefficients are fit to data
+on a particular range, the global behaviour outside this range can be
+very erratic. When test data comprise the ends of the ordered dataset, 
+test metric shows very poor fit because of this. It is best to randomize 
+dataset before running this function.
 """
-def kcv(metric, k, model, x_vals, y_vals, *args):
+def kcv(metric, k, rand, model, x_vals, y_vals, *args):
   numpts = len(y_vals)
   set_size = np.ceil(numpts / float(k) )# number of elements in test set
                                                       # use ceil because test set may be small
@@ -96,3 +105,31 @@ def kcv(metric, k, model, x_vals, y_vals, *args):
     plt.show()
   
   return 1
+  
+  
+""" 
+Randomize covariates and response variable together.
+User has option to input seed 
+
+y_data is assumed to be 1d numpy array
+x_data can be 2d array with each column corresponding to one data point
+
+"""
+def randomize(x_data, y_data, seed=0):
+  numpts = len(y_data)
+  x_out = np.zeros(x_data.shape)
+  y_out = np.zeros(y_data.shape)
+  
+  np.random.seed(seed)  
+  index_in = np.random.permutation(numpts)
+  print "cv. randomize: permuted indicies ",  index_in
+  
+  # perrmute columns of x_data and y_data according to the above permutation
+  index_out = np.arange(0,numpts)
+  if len(x_data.shape) == 1:
+    x_out[index_out] = x_data[index_in]
+  else:
+    x_out[:,index_out] = x_data[:, index_in]
+  y_out[index_out] = y_data[index_in]
+  
+  return [x_out,y_out]
