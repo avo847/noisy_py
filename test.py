@@ -26,7 +26,7 @@ y_true = np.sin(x)
 
 for sigma in np.arange(0.1, 0.5, 0.1):
   y_data = gen.noisy_1d(np.sin, x, sigma)
-  print "variance: ", sigma**2, ", mean square error: ", lrg.mean_sq_err(y_true, y_data)
+  print "variance: ", sigma**2, ", mean square error: ", metrics.mean_sq_err(y_true, y_data)
 
 
 # test randomize function

@@ -38,13 +38,3 @@ def poly_fit_reg(xvals, yvals, max_deg, lam=0):
   L[0,0] = 0 # dont penalize parameter corresponding to mean
   coeffs = np.linalg.solve( (np.dot(phi.T, phi) + L), np.dot(phi.T,yvals))
   return coeffs
-  
-"""
-Return sum squared error
-"""
-def sum_sq_err(fit, targets):
-  err = fit - targets
-  return np.dot(err, err)
-  
-def mean_sq_err(fit, targets):
-  return sum_sq_err(fit,targets) / targets.size
