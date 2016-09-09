@@ -14,24 +14,21 @@ yvals = gen.noisy_1d(f, xvals, 1)
 
 fig = plt.figure()
 ax = fig.add_subplot(111)
-#util.set_axis_lims(ax, np.array([xvals,yvals]))
 ax.plot(xvals,yvals, 'o', label="sampled points")
 ax.plot(xvals,f(xvals), label='original curve')
 
 
 # Determine coefficients for a polynomial fit
-w = lrg.poly_fit_reg(xvals, yvals, 12, 0)
+#w = lrg.poly_fit_reg(xvals, yvals, 12, 0)
+w = lrg.linear_basis_reg(xvals, yvals, np.power, 1, 12, 1, 0)
 print 'coeffs: ', w 
-
-#cv.kcv(metrics.euclidean, 2, lrg.poly_fit_reg,  xvals, yvals, 12, 0)
-cv.partition(yvals,0.5, 1)
 
 fit = np.array([w[0][0]]*len(xvals))
 for i in range(1, len(w)):
   fit += w[i][0] * xvals**i
   
 # compute sum squared error
-print 'mean square error: ', lrg.mean_sq_err(fit, yvals)
+print 'mean square error: ', metrics.mean_sq_err(fit, yvals)
 print "rms", metrics.root_mean_sq_err(fit,yvals)
 
 # add polynomial fit to plot
